@@ -1,4 +1,5 @@
 # SplitPal — Expense tracker & bill splitting
+
 ![CI](https://github.com/NuTT7/splitpal/actions/workflows/ci.yml/badge.svg)
 
 Track your own monthly income and expenses, and split shared costs with roommates or travel buddies.

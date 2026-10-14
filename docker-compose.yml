@@ -1,0 +1,44 @@
+# Run everything:      docker compose up --build   → http://localhost:3001
+# Only the database:   docker compose up -d db   (then use `npm run dev` locally)
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: splitpal
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 3s
+      retries: 10
+
+  migrate:
+    build:
+      context: .
+      target: builder
+    command: sh -c "npm run db:migrate && npm run db:seed"
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/splitpal
+    depends_on:
+      db:
+        condition: service_healthy
+
+  app:
+    build:
+      context: .
+      target: runner
+    ports:
+      - "3001:3000"
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/splitpal
+      AUTH_SECRET: ${AUTH_SECRET:-dev-only-secret-change-me-in-production-please}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  pgdata:

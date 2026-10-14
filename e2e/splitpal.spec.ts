@@ -4,7 +4,7 @@ const PASSWORD = "correct-horse-1";
 const uid = () => Math.random().toString(36).slice(2, 8);
 
 async function register(page: Page, name: string, email: string) {
-  await page.getByLabel("ชื่อที่เพื่อนเห็น").fill(name);
+  await page.getByLabel("ชื่อผู้ใช้").fill(name);
   await page.getByLabel("อีเมล").fill(email);
   await page.getByLabel("รหัสผ่าน", { exact: true }).fill(PASSWORD);
   await page.getByLabel("ยืนยันรหัสผ่าน").fill(PASSWORD);
